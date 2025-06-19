@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.itt.newsaggregator.repository.ArticleRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -24,10 +25,12 @@ import org.springframework.http.HttpHeaders;
 public class NewsAPIClientImpl implements NewsAPIClient{
     private final RestTemplate restTemplate;
     private final ExternalAPIRepository externalAPIRepository;
+    private final ArticleRepository articleRepository;
 
-    public NewsAPIClientImpl(RestTemplate restTemplate,ExternalAPIRepository externalAPIRepository) {
+    public NewsAPIClientImpl(RestTemplate restTemplate, ExternalAPIRepository externalAPIRepository, ArticleRepository articleRepository) {
         this.restTemplate = restTemplate;
         this.externalAPIRepository  = externalAPIRepository;
+        this.articleRepository = articleRepository;
     }
 
     @Override
@@ -39,6 +42,7 @@ public class NewsAPIClientImpl implements NewsAPIClient{
                 .build()
                 .encode()
                 .toUri();
+        System.out.println("uri--------"+uri);
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(null, headers);
@@ -52,14 +56,20 @@ public class NewsAPIClientImpl implements NewsAPIClient{
         DateTimeFormatter fmt = DateTimeFormatter.ISO_DATE_TIME;
 
         for (JsonNode node : arr) {
+            String url = node.path("url").asText("");
+            if (articleRepository.existsByUrl(url)) {
+                continue; // Skip duplicate
+            }
             Article a = new Article();
             a.setTitle(node.path("title").asText(""));
             a.setDescription(node.path("description").asText(""));
             a.setContent(node.path("content").asText(""));
             a.setUrl(node.path("url").asText(""));
-            a.setPublishedAt(
-                    LocalDateTime.parse(node.path("publishedAt").asText(), fmt)
-            );
+            try {
+                a.setPublishedAt(LocalDateTime.parse(node.path("publishedAt").asText(), fmt));
+            } catch (Exception e) {
+                a.setPublishedAt(LocalDateTime.now()); // Fallback
+            }
             a.setExternalAPIDetails(api);
             parsedArticles.add(a);
         }

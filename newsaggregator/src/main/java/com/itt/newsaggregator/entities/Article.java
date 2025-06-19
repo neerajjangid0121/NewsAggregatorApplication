@@ -26,7 +26,7 @@ public class Article {
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String url;
 
     @Column(nullable = false,length = 2000)
