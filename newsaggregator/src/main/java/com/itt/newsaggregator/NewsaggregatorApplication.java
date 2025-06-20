@@ -1,5 +1,6 @@
 package com.itt.newsaggregator;
 
+import com.itt.newsaggregator.service.NewsAPIClientImpl;
 import com.itt.newsaggregator.service.TheNewsAPIClientImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,10 +13,9 @@ public class NewsaggregatorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(NewsaggregatorApplication.class, args);
-		//ApplicationContext context = SpringApplication.run(NewsaggregatorApplication.class, args);
-		//TheNewsAPIClientImpl fetcher = context.getBean(TheNewsAPIClientImpl.class);
-
-		//fetcher.fetchNews();
+//		ApplicationContext context = SpringApplication.run(NewsaggregatorApplication.class, args);
+//		NewsAPIClientImpl fetcher = context.getBean(NewsAPIClientImpl.class);
+//		fetcher.fetchNews();
 	}
 
 }
