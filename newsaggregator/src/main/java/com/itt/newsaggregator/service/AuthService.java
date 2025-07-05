@@ -43,7 +43,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        return new UserLoginResponseDTO(savedUser.getUsername(), savedUser.getEmail(), savedUser.getRole().getName());
+        return new UserLoginResponseDTO(user.getId(),savedUser.getUsername(), savedUser.getEmail(), savedUser.getRole().getName());
     }
 
     public UserLoginResponseDTO loginUser(UserLoginDTO loginDTO) {
@@ -53,8 +53,8 @@ public class AuthService {
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
-
-        return new UserLoginResponseDTO(user.getUsername(), user.getEmail(), user.getRole().getName());
+        System.out.println("ID---------"+user.getId());
+        return new UserLoginResponseDTO(user.getId(),user.getUsername(), user.getEmail(), user.getRole().getName());
     }
 
 

@@ -21,7 +21,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register","/api/auth/login","/api/admin/**").permitAll()
+                        .requestMatchers("/api/auth/register","/api/auth/login","/api/admin/**","/api/user/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> {}); // ✅ Non-deprecated way to enable basic auth

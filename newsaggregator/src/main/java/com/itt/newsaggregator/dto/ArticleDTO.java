@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 
 public class ArticleDTO {
 
-    private String id;
+    private Long id;
     private String title;
     private String publishedAt;
     private String url;

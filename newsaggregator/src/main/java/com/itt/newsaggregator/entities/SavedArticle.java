@@ -25,9 +25,9 @@ public class SavedArticle {
 
     @ManyToOne
     @JoinColumn(name = "article_id", nullable = false)
-    private Article articleId;
+    private Article article;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
 }
