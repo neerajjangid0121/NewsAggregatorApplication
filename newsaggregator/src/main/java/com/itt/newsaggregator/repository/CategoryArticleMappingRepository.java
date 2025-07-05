@@ -1,5 +1,6 @@
 package com.itt.newsaggregator.repository;
 
+import com.itt.newsaggregator.entities.Article;
 import com.itt.newsaggregator.entities.CategoryArticleMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +26,6 @@ public interface CategoryArticleMappingRepository extends JpaRepository<Category
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             @Param("category") String category);
+
+    List<CategoryArticleMapping> findByArticle(Article article);
 }

@@ -49,4 +49,14 @@ public class UserNewsController {
         savedArticleService.deleteSavedArticle(savedArticleId, userId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ArticleDTO>> searchArticles(
+            @RequestParam("query") String query,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(value = "sortBy", required = false) String sortBy
+    ) {
+        return ResponseEntity.ok(articleService.searchArticles(query, startDate, endDate, sortBy));
+    }
 }
