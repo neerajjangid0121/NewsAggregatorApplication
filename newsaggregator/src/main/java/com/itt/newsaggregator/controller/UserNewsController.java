@@ -2,6 +2,7 @@ package com.itt.newsaggregator.controller;
 
 import com.itt.newsaggregator.dto.ArticleDTO;
 import com.itt.newsaggregator.dto.SavedArticleRequestDTO;
+import com.itt.newsaggregator.dto.SavedArticleResponseDTO;
 import com.itt.newsaggregator.service.ArticleService;
 import com.itt.newsaggregator.service.SavedArticleService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +35,18 @@ public class UserNewsController {
     @PostMapping("/saved")
     public ResponseEntity<Void> saveArticle(@RequestBody SavedArticleRequestDTO requestDTO) {
         savedArticleService.saveArticle(requestDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/saved/{userId}")
+    public ResponseEntity<List<SavedArticleResponseDTO>> getSavedArticles(@PathVariable Long userId) {
+        List<SavedArticleResponseDTO> savedArticles = savedArticleService.getSavedArticlesByUserId(userId);
+        return ResponseEntity.ok(savedArticles);
+    }
+
+    @DeleteMapping("/saved/{savedArticleId}/user/{userId}")
+    public ResponseEntity<Void> deleteSavedArticle(@PathVariable Long savedArticleId, @PathVariable Long userId) {
+        savedArticleService.deleteSavedArticle(savedArticleId, userId);
         return ResponseEntity.ok().build();
     }
 }

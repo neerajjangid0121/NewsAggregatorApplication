@@ -1,6 +1,7 @@
 package com.itt.newsaggregator.service;
 
 import com.itt.newsaggregator.dto.SavedArticleRequestDTO;
+import com.itt.newsaggregator.dto.SavedArticleResponseDTO;
 import com.itt.newsaggregator.entities.Article;
 import com.itt.newsaggregator.entities.SavedArticle;
 import com.itt.newsaggregator.entities.User;
@@ -10,6 +11,8 @@ import com.itt.newsaggregator.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SavedArticleService {
@@ -44,5 +47,40 @@ public class SavedArticleService {
         savedArticle.setSavedAt(LocalDateTime.now());
 
         savedArticleRepository.save(savedArticle);
+    }
+    public List<SavedArticleResponseDTO> getSavedArticlesByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<SavedArticle> savedArticles = savedArticleRepository.findByUserOrderBySavedAtDesc(user);
+
+        return savedArticles.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private SavedArticleResponseDTO convertToDTO(SavedArticle savedArticle) {
+        Article article = savedArticle.getArticle();
+
+        return new SavedArticleResponseDTO(
+                savedArticle.getSavedArticleId(),
+                article.getId(),
+                article.getTitle(),
+                article.getDescription(),
+                article.getUrl(),
+                article.getContent(),
+                article.getPublishedAt() != null ? article.getPublishedAt().toString() : null,
+                savedArticle.getSavedAt()
+        );
+    }
+
+    public void deleteSavedArticle(Long savedArticleId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        SavedArticle savedArticle = savedArticleRepository.findBySavedArticleIdAndUser(savedArticleId, user)
+                .orElseThrow(() -> new RuntimeException("Saved article not found or you don't have permission to delete it"));
+
+        savedArticleRepository.delete(savedArticle);
     }
 }
