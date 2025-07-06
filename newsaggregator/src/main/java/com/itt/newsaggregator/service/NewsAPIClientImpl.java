@@ -26,6 +26,7 @@ public class NewsAPIClientImpl implements NewsAPIClient {
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryArticleMappingRepository categoryArticleMappingRepository;
+    private final NotificationService notificationService;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
@@ -33,12 +34,14 @@ public class NewsAPIClientImpl implements NewsAPIClient {
                              ExternalAPIRepository externalAPIRepository,
                              ArticleRepository articleRepository,
                              CategoryRepository categoryRepository,
-                             CategoryArticleMappingRepository categoryArticleMappingRepository) {
+                             CategoryArticleMappingRepository categoryArticleMappingRepository,
+                             NotificationService notificationService) {
         this.restTemplate = restTemplate;
         this.externalAPIRepository = externalAPIRepository;
         this.articleRepository = articleRepository;
         this.categoryRepository = categoryRepository;
         this.categoryArticleMappingRepository = categoryArticleMappingRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -53,6 +56,17 @@ public class NewsAPIClientImpl implements NewsAPIClient {
             Optional<Article> articleOpt = parseAndSaveArticle(node, api);
             articleOpt.ifPresent(article -> {
                 mapArticleToCategory(article);
+
+                // Create notifications for this article AFTER category mapping
+                System.out.println("🎯 Attempting to create notifications for article: " + article.getTitle());
+                try {
+                    notificationService.createNotificationForArticle(article);
+                    System.out.println("✅ Successfully called createNotificationForArticle for: " + article.getTitle());
+                } catch (Exception e) {
+                    System.err.println("❌ Failed to create notifications for article: " + e.getMessage());
+                    e.printStackTrace();
+                }
+
                 savedArticles.add(article);
             });
         }
@@ -102,7 +116,8 @@ public class NewsAPIClientImpl implements NewsAPIClient {
             article.setPublishedAt(LocalDateTime.now());
         }
 
-        return Optional.of(articleRepository.save(article));
+        Article savedArticle = articleRepository.save(article);
+        return Optional.of(savedArticle);
     }
 
     private String normalizeUrl(String url) {
