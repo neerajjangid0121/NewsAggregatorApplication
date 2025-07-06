@@ -2,6 +2,7 @@ package com.itt.newsaggregator.service;
 
 import com.itt.newsaggregator.dto.NotificationDTO;
 import com.itt.newsaggregator.dto.NotificationSettingsDTO;
+import com.itt.newsaggregator.dto.UsersKeywordsMappingDTO;
 import com.itt.newsaggregator.entities.*;
 import com.itt.newsaggregator.repository.CategoryArticleMappingRepository;
 import com.itt.newsaggregator.repository.CategoryRepository;
@@ -53,7 +54,8 @@ public class NotificationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
+        // Only return unread notifications
+        List<Notification> notifications = notificationRepository.findByUserAndIsReadOrderByCreatedAtDesc(user, false);
         return notifications.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -161,6 +163,32 @@ public class NotificationService {
             Keyword newKeyword = new Keyword();
             newKeyword.setKeyword(keywordText);
             return keywordRepository.save(newKeyword);
+        }
+    }
+
+    public void updateUserKeywords(UsersKeywordsMappingDTO dto) {
+        User user = userRepository.findById(Long.parseLong(dto.getUserId()))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Delete existing keyword mappings
+        List<UserKeywordMapping> existingMappings = userKeywordMappingRepository.findByUser(user);
+        userKeywordMappingRepository.deleteAll(existingMappings);
+
+        // Add new keyword mappings
+        if (dto.getKeywordIds() != null) {
+            for (String keywordText : dto.getKeywordIds()) {
+                if (keywordText != null && !keywordText.trim().isEmpty()) {
+                    // Find or create keyword
+                    Keyword keyword = findOrCreateKeyword(keywordText.trim());
+
+                    // Create user-keyword mapping
+                    UserKeywordMapping mapping = new UserKeywordMapping();
+                    mapping.setUser(user);
+                    mapping.setKeyword(keyword);
+                    mapping.setEnable(dto.isEnable());
+                    userKeywordMappingRepository.save(mapping);
+                }
+            }
         }
     }
 
