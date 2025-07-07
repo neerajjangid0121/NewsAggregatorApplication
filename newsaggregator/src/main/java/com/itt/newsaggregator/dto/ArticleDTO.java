@@ -27,6 +27,8 @@ public class ArticleDTO {
     private List<String> categories = new ArrayList<>();
     private Integer reportCount;
     private String status;
+    private Integer likeCount;
+    private Integer dislikeCount;
 
 
     public static ArticleDTO fromJson(JsonNode node) {

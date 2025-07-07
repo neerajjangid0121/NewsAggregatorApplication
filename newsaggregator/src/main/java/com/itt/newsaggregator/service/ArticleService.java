@@ -11,6 +11,9 @@ import com.itt.newsaggregator.repository.CategoryArticleMappingRepository;
 import com.itt.newsaggregator.repository.UserRepository;
 import com.itt.newsaggregator.exception.ArticleNotFoundException;
 import com.itt.newsaggregator.exception.UserNotFoundException;
+import com.itt.newsaggregator.Enums.ReactionType;
+import com.itt.newsaggregator.entities.ArticleReaction;
+import com.itt.newsaggregator.repository.ArticleReactionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,7 @@ public class ArticleService {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final KeywordService keywordService;
+    private final ArticleReactionRepository articleReactionRepository;
 
     @Value("${moderation.auto-hide-threshold:5}")
     private int autoHideThreshold;
@@ -42,13 +46,15 @@ public class ArticleService {
                           ArticleRepository articleRepository,
                           UserRepository userRepository,
                           CategoryService categoryService,
-                          KeywordService keywordService) {
+                          KeywordService keywordService,
+                          ArticleReactionRepository articleReactionRepository) {
         this.mappingRepo = mappingRepo;
         this.articleMapper = articleMapper;
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.categoryService = categoryService;
         this.keywordService = keywordService;
+        this.articleReactionRepository = articleReactionRepository;
     }
 
     public List<ArticleDTO> getArticlesBetweenDates(LocalDate start, LocalDate end, String category) {
@@ -223,5 +229,40 @@ public class ArticleService {
         return articles.stream()
                 .map(articleMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void reactToArticle(Long userId, Long articleId, ReactionType reactionType) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ArticleNotFoundException("Article not found"));
+
+        java.util.Optional<ArticleReaction> existingReactionOpt = articleReactionRepository.findByUserAndArticle(user, article);
+
+        if (existingReactionOpt.isPresent()) {
+            ArticleReaction existingReaction = existingReactionOpt.get();
+            if (existingReaction.getReactionType() == reactionType) {
+                throw new RuntimeException("User has already " + reactionType + "d this article");
+            } else {
+                // Change reaction
+                existingReaction.setReactionType(reactionType);
+                articleReactionRepository.save(existingReaction);
+            }
+        } else {
+            // New reaction
+            ArticleReaction reaction = new ArticleReaction();
+            reaction.setUser(user);
+            reaction.setArticle(article);
+            reaction.setReactionType(reactionType);
+            articleReactionRepository.save(reaction);
+        }
+
+        // Update counts
+        int likeCount = articleReactionRepository.countByArticleAndReactionType(article, ReactionType.LIKE);
+        int dislikeCount = articleReactionRepository.countByArticleAndReactionType(article, ReactionType.DISLIKE);
+        article.setLikeCount(likeCount);
+        article.setDislikeCount(dislikeCount);
+        articleRepository.save(article);
     }
 }

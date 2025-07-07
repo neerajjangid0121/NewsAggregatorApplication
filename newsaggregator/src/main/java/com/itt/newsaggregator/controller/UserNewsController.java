@@ -5,6 +5,7 @@ import com.itt.newsaggregator.dto.SavedArticleRequestDTO;
 import com.itt.newsaggregator.dto.SavedArticleResponseDTO;
 import com.itt.newsaggregator.service.ArticleService;
 import com.itt.newsaggregator.service.SavedArticleService;
+import com.itt.newsaggregator.Enums.ReactionType;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -83,5 +84,17 @@ public class UserNewsController {
     public ResponseEntity<List<ArticleDTO>> getReportedArticles() {
         List<ArticleDTO> dtos = articleService.getArticlesWithReports();
         return ResponseEntity.ok(dtos);
+    }
+
+    @PostMapping("/articles/{articleId}/like")
+    public ResponseEntity<String> likeArticle(@PathVariable Long articleId, @RequestParam Long userId) {
+        articleService.reactToArticle(userId, articleId, ReactionType.LIKE);
+        return ResponseEntity.ok("Article liked successfully");
+    }
+
+    @PostMapping("/articles/{articleId}/dislike")
+    public ResponseEntity<String> dislikeArticle(@PathVariable Long articleId, @RequestParam Long userId) {
+        articleService.reactToArticle(userId, articleId, ReactionType.DISLIKE);
+        return ResponseEntity.ok("Article disliked successfully");
     }
 }

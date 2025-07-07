@@ -10,12 +10,14 @@ import com.itt.newsaggregator.mapper.ArticleMapper;
 import com.itt.newsaggregator.repository.ArticleRepository;
 import com.itt.newsaggregator.repository.CategoryArticleMappingRepository;
 import com.itt.newsaggregator.repository.UserRepository;
+import com.itt.newsaggregator.repository.ArticleReactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import java.time.LocalDate;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -33,12 +35,14 @@ class ArticleServiceTest {
     private CategoryService categoryService;
     @Mock
     private KeywordService keywordService;
+    @Mock
+    private ArticleReactionRepository articleReactionRepository;
     private ArticleService articleService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        articleService = new ArticleService(mappingRepo, articleMapper, articleRepository, userRepository, categoryService, keywordService);
+        articleService = new ArticleService(mappingRepo, articleMapper, articleRepository, userRepository, categoryService, keywordService, articleReactionRepository);
     }
 
     @Test

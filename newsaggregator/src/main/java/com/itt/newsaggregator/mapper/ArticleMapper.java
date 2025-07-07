@@ -20,7 +20,9 @@ public class ArticleMapper {
                 article.getExternalAPIDetails().getServerName(),
                 new ArrayList<>(), // categories will be populated later
                 article.getReportCount(),
-                article.getStatus() != null ? article.getStatus().name() : null
+                article.getStatus() != null ? article.getStatus().name() : null,
+                article.getLikeCount(),
+                article.getDislikeCount()
         );
     }
 }

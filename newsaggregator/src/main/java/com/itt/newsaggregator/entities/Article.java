@@ -54,4 +54,10 @@ public class Article {
 
     @Column(name = "last_reported_at")
     private LocalDateTime lastReportedAt;
+
+    @Column(name = "like_count", nullable = false)
+    private int likeCount = 0;
+
+    @Column(name = "dislike_count", nullable = false)
+    private int dislikeCount = 0;
 }
