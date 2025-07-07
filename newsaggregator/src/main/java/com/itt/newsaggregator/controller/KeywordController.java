@@ -29,4 +29,14 @@ public class KeywordController {
         keywordService.unrestrictKeyword(keyword);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("")
+    public ResponseEntity<?> getAllKeywords() {
+        return ResponseEntity.ok(keywordService.getAllKeywords());
+    }
+
+    @GetMapping("/restricted")
+    public ResponseEntity<?> getRestrictedKeywords() {
+        return ResponseEntity.ok(keywordService.getRestrictedKeywords());
+    }
 }

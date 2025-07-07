@@ -18,7 +18,9 @@ public class ArticleMapper {
                 article.getDescription(),
                 article.getContent(),
                 article.getExternalAPIDetails().getServerName(),
-                new ArrayList<>() // categories will be populated later
+                new ArrayList<>(), // categories will be populated later
+                article.getReportCount(),
+                article.getStatus() != null ? article.getStatus().name() : null
         );
     }
 }

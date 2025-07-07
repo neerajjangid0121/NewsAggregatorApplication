@@ -41,4 +41,14 @@ public class CategoryController {
         return ResponseEntity.ok().build();
     }
 
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
+    @GetMapping("/categories/restricted")
+    public ResponseEntity<?> getRestrictedCategories() {
+        return ResponseEntity.ok(categoryService.getRestrictedCategories());
+    }
 }

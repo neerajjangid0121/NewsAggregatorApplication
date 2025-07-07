@@ -25,7 +25,8 @@ public class ArticleDTO {
     private String serverName;
 
     private List<String> categories = new ArrayList<>();
-    //private List<String> keywords;
+    private Integer reportCount;
+    private String status;
 
 
     public static ArticleDTO fromJson(JsonNode node) {

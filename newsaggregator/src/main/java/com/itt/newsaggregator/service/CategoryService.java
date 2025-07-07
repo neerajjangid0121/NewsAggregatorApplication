@@ -4,6 +4,7 @@ import com.itt.newsaggregator.entities.Category;
 import com.itt.newsaggregator.entities.User;
 import com.itt.newsaggregator.repository.CategoryRepository;
 import com.itt.newsaggregator.repository.UserRepository;
+import com.itt.newsaggregator.dto.CategoryDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,12 +67,16 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    public List<Category> getRestrictedCategories() {
-        return categoryRepository.findByIsRestrictedTrue();
+    public List<CategoryDTO> getRestrictedCategories() {
+        return categoryRepository.findByIsRestrictedTrue().stream()
+                .map(cat -> new CategoryDTO(cat.getCategoryId(), cat.getName(), cat.getIsRestricted()))
+                .toList();
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(cat -> new CategoryDTO(cat.getCategoryId(), cat.getName(), cat.getIsRestricted()))
+                .toList();
     }
 
     public boolean isCategoryRestricted(Long categoryId) {

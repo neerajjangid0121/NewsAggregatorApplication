@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class KeywordDTO {
-    private String keyId;
-    private String keyword;
+public class CategoryDTO {
+    private Long categoryId;
+    private String name;
     private Boolean isRestricted;
 }

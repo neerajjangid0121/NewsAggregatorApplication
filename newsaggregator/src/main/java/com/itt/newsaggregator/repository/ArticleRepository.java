@@ -44,4 +44,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     // Find hidden articles ordered by hidden date
     @Query("SELECT a FROM Article a WHERE a.status = 'HIDDEN' ORDER BY a.hiddenAt DESC")
     List<Article> findHiddenArticlesOrderByHiddenAt();
+
+    List<Article> findByReportCountGreaterThan(int count);
 }

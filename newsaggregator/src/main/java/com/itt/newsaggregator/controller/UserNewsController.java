@@ -78,4 +78,10 @@ public class UserNewsController {
         articleService.toggleArticleVisibility(articleId, adminUserId, hide, reason);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/articles/reported")
+    public ResponseEntity<List<ArticleDTO>> getReportedArticles() {
+        List<ArticleDTO> dtos = articleService.getArticlesWithReports();
+        return ResponseEntity.ok(dtos);
+    }
 }

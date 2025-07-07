@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleService {
@@ -213,5 +214,12 @@ public class ArticleService {
         }
 
         return false;
+    }
+
+    public List<ArticleDTO> getArticlesWithReports() {
+        List<Article> articles = articleRepository.findByReportCountGreaterThan(0);
+        return articles.stream()
+                .map(articleMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

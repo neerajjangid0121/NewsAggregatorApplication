@@ -4,6 +4,7 @@ import com.itt.newsaggregator.entities.Keyword;
 import com.itt.newsaggregator.entities.User;
 import com.itt.newsaggregator.repository.KeywordRepository;
 import com.itt.newsaggregator.repository.UserRepository;
+import com.itt.newsaggregator.dto.KeywordDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,12 +58,16 @@ public class KeywordService {
         keywordRepository.save(keyword);
     }
 
-    public List<Keyword> getRestrictedKeywords() {
-        return keywordRepository.findByIsRestrictedTrue();
+    public List<KeywordDTO> getRestrictedKeywords() {
+        return keywordRepository.findByIsRestrictedTrue().stream()
+                .map(k -> new KeywordDTO(String.valueOf(k.getKeyId()), k.getKeyword(), k.getIsRestricted()))
+                .toList();
     }
 
-    public List<Keyword> getAllKeywords() {
-        return keywordRepository.findAll();
+    public List<KeywordDTO> getAllKeywords() {
+        return keywordRepository.findAll().stream()
+                .map(k -> new KeywordDTO(String.valueOf(k.getKeyId()), k.getKeyword(), k.getIsRestricted()))
+                .toList();
     }
 
     public boolean isKeywordRestricted(String keywordText) {
@@ -73,13 +78,13 @@ public class KeywordService {
 
     // Check if any restricted keywords match article content
     public boolean hasRestrictedKeywords(String title, String description, String content) {
-        List<Keyword> restrictedKeywords = getRestrictedKeywords();
+        List<KeywordDTO> restrictedKeywords = getRestrictedKeywords();
 
         String lowerTitle = title != null ? title.toLowerCase() : "";
         String lowerDescription = description != null ? description.toLowerCase() : "";
         String lowerContent = content != null ? content.toLowerCase() : "";
 
-        for (Keyword keyword : restrictedKeywords) {
+        for (KeywordDTO keyword : restrictedKeywords) {
             String keywordText = keyword.getKeyword().toLowerCase();
             if (lowerTitle.contains(keywordText) ||
                     lowerDescription.contains(keywordText) ||
