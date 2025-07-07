@@ -9,6 +9,8 @@ import com.itt.newsaggregator.mapper.ArticleMapper;
 import com.itt.newsaggregator.repository.ArticleRepository;
 import com.itt.newsaggregator.repository.CategoryArticleMappingRepository;
 import com.itt.newsaggregator.repository.UserRepository;
+import com.itt.newsaggregator.exception.ArticleNotFoundException;
+import com.itt.newsaggregator.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,10 +146,10 @@ public class ArticleService {
     @Transactional
     public void reportArticle(Long articleId, Long userId, String reason) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("Article not found"));
+                .orElseThrow(() -> new ArticleNotFoundException("Article with ID " + articleId + " not found"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
 
         // Update article report count
         article.setReportCount(article.getReportCount() + 1);
@@ -166,10 +168,10 @@ public class ArticleService {
     @Transactional
     public void toggleArticleVisibility(Long articleId, Long adminUserId, boolean hide, String reason) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("Article not found"));
+                .orElseThrow(() -> new ArticleNotFoundException("Article with ID " + articleId + " not found"));
 
         User admin = userRepository.findById(adminUserId)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                .orElseThrow(() -> new UserNotFoundException("Admin with ID " + adminUserId + " not found"));
 
         if (hide) {
             article.setStatus(ArticleStatus.HIDDEN);
@@ -190,7 +192,7 @@ public class ArticleService {
 
     public Article getArticleById(Long articleId) {
         return articleRepository.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("Article not found"));
+                .orElseThrow(() -> new ArticleNotFoundException("Article with ID " + articleId + " not found"));
     }
 
     // Filter articles based on restrictions

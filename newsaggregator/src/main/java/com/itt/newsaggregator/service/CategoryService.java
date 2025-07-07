@@ -5,6 +5,9 @@ import com.itt.newsaggregator.entities.User;
 import com.itt.newsaggregator.repository.CategoryRepository;
 import com.itt.newsaggregator.repository.UserRepository;
 import com.itt.newsaggregator.dto.CategoryDTO;
+import com.itt.newsaggregator.exception.CategoryNotFoundException;
+import com.itt.newsaggregator.exception.UserNotFoundException;
+import com.itt.newsaggregator.exception.CategoryAlreadyExistsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +26,10 @@ public class CategoryService {
     }
 
     public boolean addCategory(String name) {
-
         name = name.trim().replaceAll("^\"|\"$", "");
-
         if (categoryRepository.findByNameIgnoreCase(name).isPresent()) {
-            return false;
+            throw new CategoryAlreadyExistsException("Category '" + name + "' already exists");
         }
-
         Category category = new Category();
         category.setName(name);
         categoryRepository.save(category);
@@ -41,10 +41,9 @@ public class CategoryService {
     @Transactional
     public void restrictCategory(Long categoryId, Long adminUserId, String reason) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-
+                .orElseThrow(() -> new CategoryNotFoundException("Category with ID " + categoryId + " not found"));
         User admin = userRepository.findById(adminUserId)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                .orElseThrow(() -> new UserNotFoundException("Admin with ID " + adminUserId + " not found"));
 
         category.setIsRestricted(true);
         category.setRestrictedBy(admin.getId());
@@ -57,7 +56,7 @@ public class CategoryService {
     @Transactional
     public void unrestrictCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with ID " + categoryId + " not found"));
 
         category.setIsRestricted(false);
         category.setRestrictedBy(null);
@@ -81,7 +80,7 @@ public class CategoryService {
 
     public boolean isCategoryRestricted(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with ID " + categoryId + " not found"));
         return category.getIsRestricted();
     }
 }

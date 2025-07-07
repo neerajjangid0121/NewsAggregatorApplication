@@ -5,6 +5,8 @@ import com.itt.newsaggregator.entities.User;
 import com.itt.newsaggregator.repository.KeywordRepository;
 import com.itt.newsaggregator.repository.UserRepository;
 import com.itt.newsaggregator.dto.KeywordDTO;
+import com.itt.newsaggregator.exception.KeywordNotFoundException;
+import com.itt.newsaggregator.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,7 @@ public class KeywordService {
     @Transactional
     public void restrictKeyword(String keywordText, Long adminUserId, String reason) {
         User admin = userRepository.findById(adminUserId)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                .orElseThrow(() -> new UserNotFoundException("Admin with ID " + adminUserId + " not found"));
 
         // Find or create keyword
         Keyword keyword = keywordRepository.findByKeyword(keywordText)
@@ -48,7 +50,7 @@ public class KeywordService {
     @Transactional
     public void unrestrictKeyword(String keywordText) {
         Keyword keyword = keywordRepository.findByKeyword(keywordText)
-                .orElseThrow(() -> new RuntimeException("Keyword not found"));
+                .orElseThrow(() -> new KeywordNotFoundException("Keyword '" + keywordText + "' not found"));
 
         keyword.setIsRestricted(false);
         keyword.setRestrictedBy(null);
