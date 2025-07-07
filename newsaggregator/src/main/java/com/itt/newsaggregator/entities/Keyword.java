@@ -29,7 +29,7 @@ public class Keyword {
     private Boolean isRestricted = false;
 
     @Column(name = "restricted_by")
-    private Long restrictedBy;  // User ID
+    private Long restrictedBy;
 
     @Column(name = "restricted_at")
     private LocalDateTime restrictedAt;

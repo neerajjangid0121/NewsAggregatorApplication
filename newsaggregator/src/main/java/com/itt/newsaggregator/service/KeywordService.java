@@ -24,14 +24,11 @@ public class KeywordService {
         this.userRepository = userRepository;
     }
 
-    // Keyword Restriction Methods
-
     @Transactional
     public void restrictKeyword(String keywordText, Long adminUserId, String reason) {
         User admin = userRepository.findById(adminUserId)
                 .orElseThrow(() -> new UserNotFoundException("Admin with ID " + adminUserId + " not found"));
 
-        // Find or create keyword
         Keyword keyword = keywordRepository.findByKeyword(keywordText)
                 .orElseGet(() -> {
                     Keyword newKeyword = new Keyword();
@@ -78,7 +75,6 @@ public class KeywordService {
                 .orElse(false);
     }
 
-    // Check if any restricted keywords match article content
     public boolean hasRestrictedKeywords(String title, String description, String content) {
         List<KeywordDTO> restrictedKeywords = getRestrictedKeywords();
 

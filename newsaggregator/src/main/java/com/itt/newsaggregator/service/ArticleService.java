@@ -128,15 +128,12 @@ public class ArticleService {
         if (sortBy != null && !sortBy.isBlank()) {
             switch (sortBy.toLowerCase()) {
                 case "likes":
-                    // For now, sort by published date (likes/dislikes not implemented yet)
                     result.sort(Comparator.comparing(ArticleDTO::getPublishedAt).reversed());
                     break;
                 case "dislikes":
-                    // For now, sort by published date (likes/dislikes not implemented yet)
                     result.sort(Comparator.comparing(ArticleDTO::getPublishedAt));
                     break;
                 default:
-                    // Default sort by published date (newest first)
                     result.sort(Comparator.comparing(ArticleDTO::getPublishedAt).reversed());
             }
         } else {
@@ -147,8 +144,6 @@ public class ArticleService {
         return result;
     }
 
-    // Article Moderation Methods
-
     @Transactional
     public void reportArticle(Long articleId, Long userId, String reason) {
         Article article = articleRepository.findById(articleId)
@@ -157,7 +152,6 @@ public class ArticleService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
 
-        // Update article report count
         article.setReportCount(article.getReportCount() + 1);
         article.setLastReportedAt(LocalDateTime.now());
 
@@ -201,14 +195,12 @@ public class ArticleService {
                 .orElseThrow(() -> new ArticleNotFoundException("Article with ID " + articleId + " not found"));
     }
 
-    // Filter articles based on restrictions
     public boolean shouldFilterArticle(Article article) {
         // Check if article is hidden
         if (article.getStatus() != ArticleStatus.PUBLIC) {
             return true;
         }
 
-        // Check category restrictions
         List<CategoryArticleMapping> categoryMappings = mappingRepo.findByArticle(article);
         for (CategoryArticleMapping mapping : categoryMappings) {
             if (categoryService.isCategoryRestricted(mapping.getCategory().getCategoryId())) {
@@ -216,7 +208,6 @@ public class ArticleService {
             }
         }
 
-        // Check keyword restrictions
         if (keywordService.hasRestrictedKeywords(article.getTitle(), article.getDescription(), article.getContent())) {
             return true;
         }
@@ -245,12 +236,10 @@ public class ArticleService {
             if (existingReaction.getReactionType() == reactionType) {
                 throw new RuntimeException("User has already " + reactionType + "d this article");
             } else {
-                // Change reaction
                 existingReaction.setReactionType(reactionType);
                 articleReactionRepository.save(existingReaction);
             }
         } else {
-            // New reaction
             ArticleReaction reaction = new ArticleReaction();
             reaction.setUser(user);
             reaction.setArticle(article);
@@ -258,7 +247,6 @@ public class ArticleService {
             articleReactionRepository.save(reaction);
         }
 
-        // Update counts
         int likeCount = articleReactionRepository.countByArticleAndReactionType(article, ReactionType.LIKE);
         int dislikeCount = articleReactionRepository.countByArticleAndReactionType(article, ReactionType.DISLIKE);
         article.setLikeCount(likeCount);

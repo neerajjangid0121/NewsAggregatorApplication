@@ -31,17 +31,13 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "ORDER BY a.publishedAt DESC")
     List<Article> searchArticlesWithoutDateRange(@Param("query") String query);
 
-    // Find articles by status
     List<Article> findByStatus(com.itt.newsaggregator.Enums.ArticleStatus status);
 
-    // Find articles by status ordered by published date
     List<Article> findByStatusOrderByPublishedAtDesc(com.itt.newsaggregator.Enums.ArticleStatus status);
 
-    // Find articles with high report count
     @Query("SELECT a FROM Article a WHERE a.reportCount >= :threshold ORDER BY a.reportCount DESC, a.lastReportedAt DESC")
     List<Article> findArticlesWithHighReportCount(@Param("threshold") int threshold);
 
-    // Find hidden articles ordered by hidden date
     @Query("SELECT a FROM Article a WHERE a.status = 'HIDDEN' ORDER BY a.hiddenAt DESC")
     List<Article> findHiddenArticlesOrderByHiddenAt();
 

@@ -93,12 +93,10 @@ public class NotificationService {
             categoryMap.put(category.getName(), false); // default to disabled
         }
 
-        // Update with actual settings
         for (NotificationSetting setting : categorySettings) {
             categoryMap.put(setting.getCategory().getName(), setting.isEnabled());
         }
 
-        // Get keywords
         List<UserKeywordMapping> userKeywordMappings = userKeywordMappingRepository.findByUserAndIsEnable(user, true);
         List<String> keywords = userKeywordMappings.stream()
                 .map(mapping -> mapping.getKeyword().getKeyword())

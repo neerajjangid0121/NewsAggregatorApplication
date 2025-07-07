@@ -13,9 +13,6 @@ public class NewsaggregatorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(NewsaggregatorApplication.class, args);
-//		ApplicationContext context = SpringApplication.run(NewsaggregatorApplication.class, args);
-//		NewsAPIClientImpl fetcher = context.getBean(NewsAPIClientImpl.class);
-//		fetcher.fetchNews();
 	}
 
 }

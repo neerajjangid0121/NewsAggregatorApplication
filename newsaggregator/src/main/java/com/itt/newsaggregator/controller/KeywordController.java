@@ -23,7 +23,6 @@ public class KeywordController {
         return ResponseEntity.ok().build();
     }
 
-    // Remove keyword restriction
     @DeleteMapping("/restrict")
     public ResponseEntity<Void> removeKeywordRestriction(@RequestParam String keyword) {
         keywordService.unrestrictKeyword(keyword);

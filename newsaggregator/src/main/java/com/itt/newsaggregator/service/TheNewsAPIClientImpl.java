@@ -63,7 +63,6 @@ public class TheNewsAPIClientImpl implements NewsAPIClient {
                 mapToAllCategory(article);
             }
 
-            // Create notifications for this article
             System.out.println("🎯 Attempting to create notifications for article: " + article.getTitle());
             try {
                 notificationService.createNotificationForArticle(article);

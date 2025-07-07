@@ -50,8 +50,6 @@ public class NotificationController {
     public ResponseEntity<Void> updateNotificationKeywords(@RequestBody Map<String, Object> request) {
         Long userId = Long.parseLong(request.get("user_id").toString());
         List<String> keywords = (List<String>) request.get("keywords");
-
-        // Create a simple DTO for the service
         NotificationSettingsDTO dto = new NotificationSettingsDTO();
         dto.setUserId(userId);
         dto.setKeywords(keywords);

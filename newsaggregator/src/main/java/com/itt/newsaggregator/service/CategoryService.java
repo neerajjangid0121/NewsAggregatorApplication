@@ -36,8 +36,6 @@ public class CategoryService {
         return true;
     }
 
-    // Category Restriction Methods
-
     @Transactional
     public void restrictCategory(Long categoryId, Long adminUserId, String reason) {
         Category category = categoryRepository.findById(categoryId)

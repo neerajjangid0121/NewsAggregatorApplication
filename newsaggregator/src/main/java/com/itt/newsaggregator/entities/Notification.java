@@ -33,7 +33,7 @@ public class Notification {
     private String triggerValue; // category name or keyword that triggered the notification
 
     @Column(name = "message", nullable = false)
-    private String message; // notification message
+    private String message;
 
     @Column(name = "is_read", nullable = false)
     private Boolean isRead = false;

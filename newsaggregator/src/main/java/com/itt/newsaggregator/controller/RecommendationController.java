@@ -30,7 +30,6 @@ public class RecommendationController {
 
     @GetMapping
     public List<ArticleDTO> getRecommendations(@AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
-        // Get the User entity from principal
         User user = userRepository.findByUsername(principal.getUsername()).orElseThrow();
         List<Article> recommended = recommendationService.getRecommendationsForUser(user.getId(), 20);
         return recommended.stream().map(articleMapper::toDto).collect(Collectors.toList());

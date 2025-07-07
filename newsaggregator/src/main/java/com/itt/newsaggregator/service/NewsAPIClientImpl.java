@@ -57,7 +57,6 @@ public class NewsAPIClientImpl implements NewsAPIClient {
             articleOpt.ifPresent(article -> {
                 mapArticleToCategory(article);
 
-                // Create notifications for this article AFTER category mapping
                 System.out.println("🎯 Attempting to create notifications for article: " + article.getTitle());
                 try {
                     notificationService.createNotificationForArticle(article);

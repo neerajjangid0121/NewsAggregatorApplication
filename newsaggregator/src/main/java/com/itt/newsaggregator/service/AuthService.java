@@ -53,7 +53,6 @@ public class AuthService {
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
-        System.out.println("ID---------"+user.getId());
         return new UserLoginResponseDTO(user.getId(),user.getUsername(), user.getEmail(), user.getRole().getName());
     }
 

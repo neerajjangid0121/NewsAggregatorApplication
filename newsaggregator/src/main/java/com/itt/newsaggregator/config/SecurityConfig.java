@@ -24,7 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register","/api/auth/login","/api/admin/**","/api/user/**","/api/categories/**","/api/keywords/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(httpBasic -> {}); // ✅ Non-deprecated way to enable basic auth
+                .httpBasic(httpBasic -> {});
 
         return http.build();
     }
