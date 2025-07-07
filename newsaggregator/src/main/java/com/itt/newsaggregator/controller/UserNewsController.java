@@ -32,6 +32,16 @@ public class UserNewsController {
         return ResponseEntity.ok(articleService.getArticlesBetweenDates(startDate, endDate, category));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ArticleDTO>> searchArticles(
+            @RequestParam("query") String query,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(value = "sortBy", required = false) String sortBy
+    ) {
+        return ResponseEntity.ok(articleService.searchArticles(query, startDate, endDate, sortBy));
+    }
+
     @PostMapping("/saved")
     public ResponseEntity<Void> saveArticle(@RequestBody SavedArticleRequestDTO requestDTO) {
         savedArticleService.saveArticle(requestDTO);
@@ -50,13 +60,22 @@ public class UserNewsController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<ArticleDTO>> searchArticles(
-            @RequestParam("query") String query,
-            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(value = "sortBy", required = false) String sortBy
-    ) {
-        return ResponseEntity.ok(articleService.searchArticles(query, startDate, endDate, sortBy));
+    @PostMapping("/articles/{articleId}/report")
+    public ResponseEntity<Void> reportArticle(
+            @PathVariable Long articleId,
+            @RequestParam Long userId,
+            @RequestParam String reason) {
+        articleService.reportArticle(articleId, userId, reason);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/articles/{articleId}/visibility")
+    public ResponseEntity<Void> toggleArticleVisibility(
+            @PathVariable Long articleId,
+            @RequestParam Long adminUserId,
+            @RequestParam boolean hide,
+            @RequestParam(required = false) String reason) {
+        articleService.toggleArticleVisibility(articleId, adminUserId, hide, reason);
+        return ResponseEntity.ok().build();
     }
 }

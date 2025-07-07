@@ -2,12 +2,11 @@ package com.itt.newsaggregator.entities;
 
 import java.time.LocalDateTime;
 
+import com.itt.newsaggregator.Enums.ArticleStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import static jakarta.persistence.CascadeType.ALL;
 
 
 @Data
@@ -19,10 +18,10 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String title;
-    
+
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
 
@@ -39,4 +38,20 @@ public class Article {
     @JoinColumn(name = "server_id", nullable = false)
     private ExternalAPIDetails externalAPIDetails;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ArticleStatus status = ArticleStatus.PUBLIC;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hidden_by")
+    private User hiddenBy;
+
+    @Column(name = "hidden_at")
+    private LocalDateTime hiddenAt;
+
+    @Column(name = "report_count", nullable = false)
+    private Integer reportCount = 0;
+
+    @Column(name = "last_reported_at")
+    private LocalDateTime lastReportedAt;
 }

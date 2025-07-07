@@ -3,10 +3,7 @@ package com.itt.newsaggregator.controller;
 import com.itt.newsaggregator.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -28,4 +25,20 @@ public class CategoryController {
 
         return created ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
+
+    @PostMapping("/categories/{categoryId}/restrict")
+    public ResponseEntity<Void> restrictCategory(
+            @PathVariable Long categoryId,
+            @RequestParam Long adminUserId,
+            @RequestParam String reason) {
+        categoryService.restrictCategory(categoryId, adminUserId, reason);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/categories/{categoryId}/restrict")
+    public ResponseEntity<Void> removeCategoryRestriction(@PathVariable Long categoryId) {
+        categoryService.unrestrictCategory(categoryId);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +27,16 @@ public class Category {
 
     @Column(length = 1000)
     private String keywords;
+
+    @Column(name = "is_restricted", nullable = false)
+    private Boolean isRestricted = false;
+
+    @Column(name = "restricted_by")
+    private Long restrictedBy;  // User ID
+
+    @Column(name = "restricted_at")
+    private LocalDateTime restrictedAt;
+
+    @Column(name = "restriction_reason", length = 500)
+    private String restrictionReason;
 }

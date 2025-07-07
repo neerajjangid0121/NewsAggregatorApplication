@@ -61,6 +61,8 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
+
+
     public void markNotificationAsRead(Long notificationId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -293,4 +295,6 @@ public class NotificationService {
                 notification.getReadAt()
         );
     }
+
+
 }
